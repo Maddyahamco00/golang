@@ -54,12 +54,12 @@ func (s *WalletService) CreateWallet(ctx context.Context, req CreateWalletReques
 	}
 
 	wallet := &models.Wallet{
-		ID:       uuid.New(),
-		UserID:   req.UserID,
-		Balance:  0,
-		Currency: req.Currency,
-		Tier:     req.Tier,
-		IsActive: true,
+		ID:        uuid.New(),
+		UserID:    req.UserID,
+		Balance:   0,
+		Currency:  req.Currency,
+		Tier:      req.Tier,
+		IsActive:  true,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -126,10 +126,10 @@ func (s *WalletService) Transfer(ctx context.Context, req TransferRequest) (*mod
 }
 
 type DepositRequest struct {
-	WalletID   uuid.UUID
-	Amount     int64
-	Reference  string
-	Type       models.TransactionType
+	WalletID    uuid.UUID
+	Amount      int64
+	Reference   string
+	Type        models.TransactionType
 	Description string
 }
 
@@ -162,9 +162,9 @@ func (s *WalletService) Deposit(ctx context.Context, req DepositRequest) (*model
 }
 
 type WithdrawRequest struct {
-	WalletID   uuid.UUID
-	Amount     int64
-	Reference  string
+	WalletID    uuid.UUID
+	Amount      int64
+	Reference   string
 	Description string
 }
 

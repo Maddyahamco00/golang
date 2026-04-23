@@ -22,10 +22,10 @@ func NewEscrowHandler(escrowSvc *service.EscrowService, walletSvc *service.Walle
 
 // POST /escrow/create
 type CreateEscrowRequest struct {
-	SellerID   string `json:"seller_id" binding:"required"`
-	BuyerID    string `json:"buyer_id" binding:"required"`
-	Amount     int64  `json:"amount" binding:"required,gt=0"`
-	ExternalRef string `json:"external_ref" binding:"required"`
+	SellerID       string `json:"seller_id" binding:"required"`
+	BuyerID        string `json:"buyer_id" binding:"required"`
+	Amount         int64  `json:"amount" binding:"required,gt=0"`
+	ExternalRef    string `json:"external_ref" binding:"required"`
 	IdempotencyKey string `json:"idempotency_key" binding:"required"`
 }
 

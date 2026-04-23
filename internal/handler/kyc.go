@@ -20,14 +20,14 @@ func NewKYCHandler(kycSvc *service.KYCService) *KYCHandler {
 
 // POST /kyc/submit
 type SubmitKYCRequest struct {
-	UserID    string `json:"user_id" binding:"required"`
-	FirstName string `json:"first_name" binding:"required"`
-	LastName  string `json:"last_name" binding:"required"`
-	Email     string `json:"email" binding:"required,email"`
-	Phone     string `json:"phone" binding:"required"`
-	Address   string `json:"address" binding:"required"`
+	UserID       string `json:"user_id" binding:"required"`
+	FirstName    string `json:"first_name" binding:"required"`
+	LastName     string `json:"last_name" binding:"required"`
+	Email        string `json:"email" binding:"required,email"`
+	Phone        string `json:"phone" binding:"required"`
+	Address      string `json:"address" binding:"required"`
 	DocumentType string `json:"document_type" binding:"required"`
-	DocumentID string `json:"document_id" binding:"required"`
+	DocumentID   string `json:"document_id" binding:"required"`
 }
 
 func (h *KYCHandler) SubmitKYC(c *gin.Context) {
@@ -44,13 +44,13 @@ func (h *KYCHandler) SubmitKYC(c *gin.Context) {
 	}
 
 	kycRecord, err := h.kycSvc.SubmitKYC(c.Request.Context(), userID, service.KYCSubmission{
-		FirstName:     req.FirstName,
-		LastName:      req.LastName,
-		Email:         req.Email,
-		Phone:         req.Phone,
-		Address:       req.Address,
-		DocumentType:  req.DocumentType,
-		DocumentID:    req.DocumentID,
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		Email:        req.Email,
+		Phone:        req.Phone,
+		Address:      req.Address,
+		DocumentType: req.DocumentType,
+		DocumentID:   req.DocumentID,
 	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

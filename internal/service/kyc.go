@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io"
 	"net/http"
 	"time"
 
@@ -16,14 +14,14 @@ import (
 )
 
 var (
-	ErrKYCNotFound     = errors.New("kyc record not found")
+	ErrKYCNotFound           = errors.New("kyc record not found")
 	ErrKYCVerificationFailed = errors.New("kyc verification failed")
 )
 
 type KYCService struct {
-	kycRepo  *repository.KYCRepository
+	kycRepo    *repository.KYCRepository
 	walletRepo *repository.WalletRepository
-	cfg      *config.KYCConfig
+	cfg        *config.KYCConfig
 	httpClient *http.Client
 }
 
@@ -33,9 +31,9 @@ func NewKYCService(
 	cfg *config.KYCConfig,
 ) *KYCService {
 	return &KYCService{
-		kycRepo:  kycRepo,
+		kycRepo:    kycRepo,
 		walletRepo: walletRepo,
-		cfg:      cfg,
+		cfg:        cfg,
 		httpClient: &http.Client{Timeout: 30 * time.Second},
 	}
 }

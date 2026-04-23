@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	ErrEscrowNotFound     = errors.New("escrow not found")
-	ErrEscrowAlreadyHeld  = errors.New("escrow already held")
-	ErrEscrowNotHeld      = errors.New("escrow not in held status")
+	ErrEscrowNotFound        = errors.New("escrow not found")
+	ErrEscrowAlreadyHeld     = errors.New("escrow already held")
+	ErrEscrowNotHeld         = errors.New("escrow not in held status")
 	ErrEscrowAlreadyReleased = errors.New("escrow already released")
 )
 
@@ -76,13 +76,13 @@ func (s *EscrowService) CreateEscrow(ctx context.Context, req CreateEscrowReques
 
 	// Create escrow record
 	escrow := &models.EscrowTransaction{
-		ID:       uuid.New(),
-		OrderID:  req.OrderID,
-		BuyerID:  req.BuyerID,
-		SellerID: req.SellerID,
-		Amount:   req.Amount,
-		Status:   models.EscrowStatusHeld,
-		HeldAt:   time.Now(),
+		ID:        uuid.New(),
+		OrderID:   req.OrderID,
+		BuyerID:   req.BuyerID,
+		SellerID:  req.SellerID,
+		Amount:    req.Amount,
+		Status:    models.EscrowStatusHeld,
+		HeldAt:    time.Now(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}

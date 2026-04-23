@@ -47,9 +47,9 @@ func (h *LoanHandler) CheckEligibility(c *gin.Context) {
 
 // POST /loan/apply
 type ApplyLoanRequest struct {
-	UserID    string `json:"user_id" binding:"required"`
-	Amount    int64  `json:"amount" binding:"required,gt=0"`
-	Duration  int    `json:"duration" binding:"required,gt=0"`
+	UserID         string `json:"user_id" binding:"required"`
+	Amount         int64  `json:"amount" binding:"required,gt=0"`
+	Duration       int    `json:"duration" binding:"required,gt=0"`
 	IdempotencyKey string `json:"idempotency_key" binding:"required"`
 }
 
@@ -94,8 +94,8 @@ func (h *LoanHandler) DisburseLoan(c *gin.Context) {
 
 // POST /loan/repay
 type RepayLoanRequest struct {
-	LoanID   string `json:"loan_id" binding:"required"`
-	Amount   int64  `json:"amount" binding:"required,gt=0"`
+	LoanID         string `json:"loan_id" binding:"required"`
+	Amount         int64  `json:"amount" binding:"required,gt=0"`
 	IdempotencyKey string `json:"idempotency_key" binding:"required"`
 }
 

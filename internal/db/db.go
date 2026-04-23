@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/agri-finance/platform/internal/config"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
