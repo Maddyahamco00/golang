@@ -48,7 +48,13 @@ func (h *EscrowHandler) CreateEscrow(c *gin.Context) {
 		return
 	}
 
-	escrow, err := h.escrowSvc.CreateEscrow(c.Request.Context(), sellerID, buyerID, req.Amount, req.ExternalRef, req.IdempotencyKey)
+	escrow, err := h.escrowSvc.CreateEscrow(c.Request.Context(), service.CreateEscrowRequest{
+		OrderID:   req.ExternalRef,
+		BuyerID:   buyerID,
+		SellerID:  sellerID,
+		Amount:   req.Amount,
+		Reference: req.IdempotencyKey,
+	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -64,19 +70,19 @@ type ReleaseEscrowRequest struct {
 }
 
 func (h *EscrowHandler) ReleaseEscrow(c *gin.Context) {
-	var req ReleaseEscrowRequest
+	var req struct {
+		EscrowID       string `json:"escrow_id" binding:"required"`
+		IdempotencyKey string `json:"idempotency_key" binding:"required"`
+	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	escrowID, err := uuid.Parse(req.EscrowID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid escrow_id"})
-		return
-	}
-
-	escrow, err := h.escrowSvc.ReleaseEscrow(c.Request.Context(), escrowID, req.IdempotencyKey)
+	escrow, err := h.escrowSvc.ReleaseEscrow(c.Request.Context(), service.ReleaseEscrowRequest{
+		OrderID:   req.EscrowID,
+		Reference: req.IdempotencyKey,
+	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -87,13 +93,13 @@ func (h *EscrowHandler) ReleaseEscrow(c *gin.Context) {
 
 // GET /escrow/:id
 func (h *EscrowHandler) GetEscrow(c *gin.Context) {
-	escrowID, err := uuid.Parse(c.Param("id"))
-	if err != nil {
+	orderID := c.Param("id")
+	if orderID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid escrow_id"})
 		return
 	}
 
-	escrow, err := h.escrowSvc.GetEscrow(c.Request.Context(), escrowID)
+	escrow, err := h.escrowSvc.GetEscrow(c.Request.Context(), orderID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "escrow not found"})
 		return

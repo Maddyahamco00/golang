@@ -35,12 +35,12 @@ func (h *AdminHandler) GetAllWallets(c *gin.Context) {
 	offset := 0
 
 	if l := c.Query("limit"); l != "" {
-		if parsed := parseIntDefault(l, 20); parsed > 0 {
+		if parsed := ParseIntDefault(l, 20); parsed > 0 {
 			limit = parsed
 		}
 	}
 	if o := c.Query("offset"); o != "" {
-		offset = parseIntDefault(o, 0)
+		offset = ParseIntDefault(o, 0)
 	}
 
 	// For now, return empty - would need a List method in wallet service
@@ -74,12 +74,12 @@ func (h *AdminHandler) GetAllTransactions(c *gin.Context) {
 	offset := 0
 
 	if l := c.Query("limit"); l != "" {
-		if parsed := parseIntDefault(l, 20); parsed > 0 {
+		if parsed := ParseIntDefault(l, 20); parsed > 0 {
 			limit = parsed
 		}
 	}
 	if o := c.Query("offset"); o != "" {
-		offset = parseIntDefault(o, 0)
+		offset = ParseIntDefault(o, 0)
 	}
 
 	// Would need a List method in wallet service
@@ -96,12 +96,12 @@ func (h *AdminHandler) GetAllLoans(c *gin.Context) {
 	offset := 0
 
 	if l := c.Query("limit"); l != "" {
-		if parsed := parseIntDefault(l, 20); parsed > 0 {
+		if parsed := ParseIntDefault(l, 20); parsed > 0 {
 			limit = parsed
 		}
 	}
 	if o := c.Query("offset"); o != "" {
-		offset = parseIntDefault(o, 0)
+		offset = ParseIntDefault(o, 0)
 	}
 
 	loans, err := h.loanSvc.GetAllLoans(c.Request.Context(), limit, offset)
@@ -160,12 +160,12 @@ func (h *AdminHandler) GetAllEscrows(c *gin.Context) {
 	offset := 0
 
 	if l := c.Query("limit"); l != "" {
-		if parsed := parseIntDefault(l, 20); parsed > 0 {
+		if parsed := ParseIntDefault(l, 20); parsed > 0 {
 			limit = parsed
 		}
 	}
 	if o := c.Query("offset"); o != "" {
-		offset = parseIntDefault(o, 0)
+		offset = ParseIntDefault(o, 0)
 	}
 
 	escrows, err := h.escrowSvc.GetAllEscrows(c.Request.Context(), limit, offset)
@@ -207,12 +207,12 @@ func (h *AdminHandler) GetAllKYC(c *gin.Context) {
 	offset := 0
 
 	if l := c.Query("limit"); l != "" {
-		if parsed := parseIntDefault(l, 20); parsed > 0 {
+		if parsed := ParseIntDefault(l, 20); parsed > 0 {
 			limit = parsed
 		}
 	}
 	if o := c.Query("offset"); o != "" {
-		offset = parseIntDefault(o, 0)
+		offset = ParseIntDefault(o, 0)
 	}
 
 	records, err := h.kycSvc.GetAllKYC(c.Request.Context(), limit, offset)

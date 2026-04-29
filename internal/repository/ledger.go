@@ -5,6 +5,7 @@ import (
 
 	"github.com/agri-finance/platform/internal/models"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,12 +17,12 @@ func NewLedgerRepository(db *pgxpool.Pool) *LedgerRepository {
 	return &LedgerRepository{db: db}
 }
 
-func (r *LedgerRepository) CreateEntry(ctx context.Context, tx *pgxpool.Tx, entry *models.LedgerEntry) error {
+func (r *LedgerRepository) CreateEntry(ctx context.Context, tx pgx.Tx, entry *models.LedgerEntry) error {
 	query := `
 		INSERT INTO ledger_entries (id, transaction_id, wallet_id, entry_type, amount, balance_before, balance_after, description, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`
-	_, err := (*tx).Exec(ctx, query,
+	_, err := tx.Exec(ctx, query,
 		entry.ID,
 		entry.TransactionID,
 		entry.WalletID,

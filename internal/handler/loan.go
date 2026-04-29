@@ -36,7 +36,7 @@ func (h *LoanHandler) CheckEligibility(c *gin.Context) {
 		return
 	}
 
-	eligibility, err := h.loanSvc.CheckEligibility(c.Request.Context(), userID)
+	eligibility, err := h.loanSvc.CalculateLoanEligibility(c.Request.Context(), userID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -66,7 +66,11 @@ func (h *LoanHandler) ApplyForLoan(c *gin.Context) {
 		return
 	}
 
-	loan, err := h.loanSvc.ApplyForLoan(c.Request.Context(), userID, req.Amount, req.Duration, req.IdempotencyKey)
+	loan, err := h.loanSvc.ApplyForLoan(c.Request.Context(), service.ApplyLoanRequest{
+		UserID:   userID,
+		Amount:  req.Amount,
+		Duration: req.Duration,
+	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -83,7 +87,10 @@ func (h *LoanHandler) DisburseLoan(c *gin.Context) {
 		return
 	}
 
-	loan, err := h.loanSvc.DisburseLoan(c.Request.Context(), loanID)
+	loan, err := h.loanSvc.DisburseLoan(c.Request.Context(), service.DisburseLoanRequest{
+		LoanID:    loanID,
+		Reference: c.Query("reference"),
+	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -112,7 +119,11 @@ func (h *LoanHandler) RepayLoan(c *gin.Context) {
 		return
 	}
 
-	loan, err := h.loanSvc.RepayLoan(c.Request.Context(), loanID, req.Amount, req.IdempotencyKey)
+	loan, err := h.loanSvc.RepayLoan(c.Request.Context(), service.RepayLoanRequest{
+		LoanID:    loanID,
+		Amount:    req.Amount,
+		Reference: req.IdempotencyKey,
+	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

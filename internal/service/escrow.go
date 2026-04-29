@@ -70,7 +70,7 @@ func (s *EscrowService) CreateEscrow(ctx context.Context, req CreateEscrowReques
 
 	// Transfer from buyer to escrow (internal escrow wallet)
 	// In production, this would go to a dedicated escrow account
-	if err := s.ledgerSvc.ExecuteTransfer(ctx, &tx, buyerWallet.ID, buyerWallet.ID, req.Amount, req.Reference, "escrow_hold:"+req.OrderID); err != nil {
+	if err := s.ledgerSvc.ExecuteTransfer(ctx, tx, buyerWallet.ID, buyerWallet.ID, req.Amount, req.Reference, "escrow_hold:"+req.OrderID); err != nil {
 		return nil, err
 	}
 
@@ -87,7 +87,7 @@ func (s *EscrowService) CreateEscrow(ctx context.Context, req CreateEscrowReques
 		UpdatedAt: time.Now(),
 	}
 
-	if err := s.escrowRepo.Create(ctx, &tx, escrow); err != nil {
+	if err := s.escrowRepo.Create(ctx, tx, escrow); err != nil {
 		return nil, err
 	}
 
@@ -135,18 +135,18 @@ func (s *EscrowService) ReleaseEscrow(ctx context.Context, req ReleaseEscrowRequ
 
 	// Release funds from escrow to seller
 	// First debit from buyer (reverse the hold)
-	if err := s.ledgerSvc.ExecuteWithdrawal(ctx, &tx, buyerWallet.ID, escrow.Amount, req.Reference+"_debit", "escrow_release:"+req.OrderID); err != nil {
+	if err := s.ledgerSvc.ExecuteWithdrawal(ctx, tx, buyerWallet.ID, escrow.Amount, req.Reference+"_debit", "escrow_release:"+req.OrderID); err != nil {
 		return nil, err
 	}
 
 	// Then credit to seller
-	if err := s.ledgerSvc.ExecuteDeposit(ctx, &tx, sellerWallet.ID, escrow.Amount, models.TransactionTypeEscrowRelease, req.Reference+"_credit", "escrow_release:"+req.OrderID); err != nil {
+	if err := s.ledgerSvc.ExecuteDeposit(ctx, tx, sellerWallet.ID, escrow.Amount, models.TransactionTypeEscrowRelease, req.Reference+"_credit", "escrow_release:"+req.OrderID); err != nil {
 		return nil, err
 	}
 
 	// Update escrow status
 	now := time.Now()
-	if err := s.escrowRepo.UpdateStatus(ctx, &tx, escrow.ID, models.EscrowStatusReleased, &now); err != nil {
+	if err := s.escrowRepo.UpdateStatus(ctx, tx, escrow.ID, models.EscrowStatusReleased, &now); err != nil {
 		return nil, err
 	}
 

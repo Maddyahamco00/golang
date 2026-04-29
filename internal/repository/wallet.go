@@ -85,13 +85,13 @@ func (r *WalletRepository) GetByUserID(ctx context.Context, userID uuid.UUID) (*
 	return &wallet, err
 }
 
-func (r *WalletRepository) UpdateBalance(ctx context.Context, tx pgxpool.Tx, walletID uuid.UUID, newBalance int64) error {
+func (r *WalletRepository) UpdateBalance(ctx context.Context, tx pgx.Tx, walletID uuid.UUID, newBalance int64) error {
 	query := `UPDATE wallets SET balance = $1, updated_at = NOW() WHERE id = $2`
 	_, err := tx.Exec(ctx, query, newBalance, walletID)
 	return err
 }
 
-func (r *WalletRepository) GetForUpdate(ctx context.Context, tx pgxpool.Tx, id uuid.UUID) (*models.Wallet, error) {
+func (r *WalletRepository) GetForUpdate(ctx context.Context, tx pgx.Tx, id uuid.UUID) (*models.Wallet, error) {
 	query := `
 		SELECT id, user_id, balance, currency, tier, is_active, created_at, updated_at
 		FROM wallets WHERE id = $1 FOR UPDATE

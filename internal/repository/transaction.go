@@ -23,12 +23,12 @@ func NewTransactionRepository(db *pgxpool.Pool) *TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
-func (r *TransactionRepository) Create(ctx context.Context, tx *pgxpool.Tx, transaction *models.Transaction) error {
+func (r *TransactionRepository) Create(ctx context.Context, tx pgx.Tx, transaction *models.Transaction) error {
 	query := `
 		INSERT INTO transactions (id, wallet_id, type, amount, balance_before, balance_after, status, description, reference, related_wallet_id, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
-	_, err := (*tx).Exec(ctx, query,
+	_, err := tx.Exec(ctx, query,
 		transaction.ID,
 		transaction.WalletID,
 		transaction.Type,
@@ -135,8 +135,8 @@ func (r *TransactionRepository) GetByWalletID(ctx context.Context, walletID uuid
 	return transactions, nil
 }
 
-func (r *TransactionRepository) UpdateStatus(ctx context.Context, tx *pgxpool.Tx, id uuid.UUID, status models.TransactionStatus) error {
+func (r *TransactionRepository) UpdateStatus(ctx context.Context, tx pgx.Tx, id uuid.UUID, status models.TransactionStatus) error {
 	query := `UPDATE transactions SET status = $1, updated_at = NOW() WHERE id = $2`
-	_, err := (*tx).Exec(ctx, query, status, id)
+	_, err := tx.Exec(ctx, query, status, id)
 	return err
 }

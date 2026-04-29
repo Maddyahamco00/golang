@@ -22,12 +22,12 @@ func NewLoanRepository(db *pgxpool.Pool) *LoanRepository {
 	return &LoanRepository{db: db}
 }
 
-func (r *LoanRepository) Create(ctx context.Context, tx *pgxpool.Tx, loan *models.Loan) error {
+func (r *LoanRepository) Create(ctx context.Context, tx pgx.Tx, loan *models.Loan) error {
 	query := `
 		INSERT INTO loans (id, user_id, amount, interest_rate, total_repayment, amount_paid, status, approved_at, disbursed_at, due_date, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
-	_, err := (*tx).Exec(ctx, query,
+	_, err := tx.Exec(ctx, query,
 		loan.ID,
 		loan.UserID,
 		loan.Amount,
@@ -107,13 +107,13 @@ func (r *LoanRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]m
 	return loans, nil
 }
 
-func (r *LoanRepository) Update(ctx context.Context, tx *pgxpool.Tx, loan *models.Loan) error {
+func (r *LoanRepository) Update(ctx context.Context, tx pgx.Tx, loan *models.Loan) error {
 	query := `
-		UPDATE loans 
+		UPDATE loans
 		SET amount_paid = $1, status = $2, updated_at = NOW()
 		WHERE id = $3
 	`
-	_, err := (*tx).Exec(ctx, query, loan.AmountPaid, loan.Status, loan.ID)
+	_, err := tx.Exec(ctx, query, loan.AmountPaid, loan.Status, loan.ID)
 	return err
 }
 

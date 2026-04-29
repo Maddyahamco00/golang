@@ -214,7 +214,7 @@ func (s *LoanService) ApplyForLoan(ctx context.Context, req ApplyLoanRequest) (*
 	}
 	defer tx.Rollback(ctx)
 
-	if err := s.loanRepo.Create(ctx, &tx, loan); err != nil {
+	if err := s.loanRepo.Create(ctx, tx, loan); err != nil {
 		return nil, err
 	}
 
@@ -255,7 +255,7 @@ func (s *LoanService) DisburseLoan(ctx context.Context, req DisburseLoanRequest)
 	defer tx.Rollback(ctx)
 
 	// Disburse to wallet
-	if err := s.ledgerSvc.ExecuteDeposit(ctx, &tx, wallet.ID, loan.Amount, models.TransactionTypeLoanDisbursement, req.Reference, "loan_disbursement"); err != nil {
+	if err := s.ledgerSvc.ExecuteDeposit(ctx, tx, wallet.ID, loan.Amount, models.TransactionTypeLoanDisbursement, req.Reference, "loan_disbursement"); err != nil {
 		return nil, err
 	}
 
@@ -264,7 +264,7 @@ func (s *LoanService) DisburseLoan(ctx context.Context, req DisburseLoanRequest)
 	loan.Status = models.LoanStatusActive
 	loan.DisbursedAt = &now
 
-	if err := s.loanRepo.Update(ctx, &tx, loan); err != nil {
+	if err := s.loanRepo.Update(ctx, tx, loan); err != nil {
 		return nil, err
 	}
 
@@ -306,7 +306,7 @@ func (s *LoanService) RepayLoan(ctx context.Context, req RepayLoanRequest) (*mod
 	defer tx.Rollback(ctx)
 
 	// Process repayment (withdraw from wallet)
-	if err := s.ledgerSvc.ExecuteWithdrawal(ctx, &tx, wallet.ID, req.Amount, req.Reference, "loan_repayment"); err != nil {
+	if err := s.ledgerSvc.ExecuteWithdrawal(ctx, tx, wallet.ID, req.Amount, req.Reference, "loan_repayment"); err != nil {
 		return nil, err
 	}
 
@@ -316,7 +316,7 @@ func (s *LoanService) RepayLoan(ctx context.Context, req RepayLoanRequest) (*mod
 		loan.Status = models.LoanStatusPaidOff
 	}
 
-	if err := s.loanRepo.Update(ctx, &tx, loan); err != nil {
+	if err := s.loanRepo.Update(ctx, tx, loan); err != nil {
 		return nil, err
 	}
 

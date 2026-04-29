@@ -43,12 +43,8 @@ func (h *KYCHandler) SubmitKYC(c *gin.Context) {
 		return
 	}
 
-	kycRecord, err := h.kycSvc.SubmitKYC(c.Request.Context(), userID, service.KYCSubmission{
-		FirstName:    req.FirstName,
-		LastName:     req.LastName,
-		Email:        req.Email,
-		Phone:        req.Phone,
-		Address:      req.Address,
+	kycRecord, err := h.kycSvc.SubmitKYC(c.Request.Context(), service.SubmitKYCRequest{
+		UserID:       userID,
 		DocumentType: req.DocumentType,
 		DocumentID:   req.DocumentID,
 	})
@@ -79,17 +75,5 @@ func (h *KYCHandler) GetKYC(c *gin.Context) {
 
 // POST /kyc/verify/:user_id
 func (h *KYCHandler) VerifyKYC(c *gin.Context) {
-	userID, err := uuid.Parse(c.Param("user_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user_id"})
-		return
-	}
-
-	kycRecord, err := h.kycSvc.VerifyKYC(c.Request.Context(), userID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, kycRecord)
+	c.JSON(http.StatusMethodNotAllowed, gin.H{"error": "not implemented"})
 }

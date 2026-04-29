@@ -112,7 +112,7 @@ func (s *WalletService) Transfer(ctx context.Context, req TransferRequest) (*mod
 	defer tx.Rollback(ctx)
 
 	// Execute transfer using ledger service
-	if err := s.ledgerSvc.ExecuteTransfer(ctx, &tx, req.FromWalletID, req.ToWalletID, req.Amount, req.Reference, req.Description); err != nil {
+	if err := s.ledgerSvc.ExecuteTransfer(ctx, tx, req.FromWalletID, req.ToWalletID, req.Amount, req.Reference, req.Description); err != nil {
 		return nil, err
 	}
 
@@ -150,7 +150,7 @@ func (s *WalletService) Deposit(ctx context.Context, req DepositRequest) (*model
 	}
 	defer tx.Rollback(ctx)
 
-	if err := s.ledgerSvc.ExecuteDeposit(ctx, &tx, req.WalletID, req.Amount, req.Type, req.Reference, req.Description); err != nil {
+	if err := s.ledgerSvc.ExecuteDeposit(ctx, tx, req.WalletID, req.Amount, req.Type, req.Reference, req.Description); err != nil {
 		return nil, err
 	}
 
@@ -185,7 +185,7 @@ func (s *WalletService) Withdraw(ctx context.Context, req WithdrawRequest) (*mod
 	}
 	defer tx.Rollback(ctx)
 
-	if err := s.ledgerSvc.ExecuteWithdrawal(ctx, &tx, req.WalletID, req.Amount, req.Reference, req.Description); err != nil {
+	if err := s.ledgerSvc.ExecuteWithdrawal(ctx, tx, req.WalletID, req.Amount, req.Reference, req.Description); err != nil {
 		return nil, err
 	}
 

@@ -8,7 +8,7 @@ import (
 	"github.com/agri-finance/platform/internal/models"
 	"github.com/agri-finance/platform/internal/repository"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 )
 
 type LedgerService struct {
@@ -27,7 +27,7 @@ func NewLedgerService(ledgerRepo *repository.LedgerRepository, walletRepo *repos
 
 // ExecuteTransfer performs an atomic transfer between two wallets using double-entry bookkeeping
 // This is the CORE financial operation that ensures data integrity
-func (s *LedgerService) ExecuteTransfer(ctx context.Context, tx *pgxpool.Tx, fromWalletID, toWalletID uuid.UUID, amount int64, reference, description string) error {
+func (s *LedgerService) ExecuteTransfer(ctx context.Context, tx pgx.Tx, fromWalletID, toWalletID uuid.UUID, amount int64, reference, description string) error {
 	// 1. Lock both wallets in a consistent order (by ID) to prevent deadlocks
 	walletIDs := []uuid.UUID{fromWalletID, toWalletID}
 	if fromWalletID.String() > toWalletID.String() {
@@ -121,7 +121,7 @@ func (s *LedgerService) ExecuteTransfer(ctx context.Context, tx *pgxpool.Tx, fro
 }
 
 // ExecuteDeposit handles money coming INTO a wallet (e.g., funding, loan disbursement)
-func (s *LedgerService) ExecuteDeposit(ctx context.Context, tx *pgxpool.Tx, walletID uuid.UUID, amount int64, txType models.TransactionType, reference, description string) error {
+func (s *LedgerService) ExecuteDeposit(ctx context.Context, tx pgx.Tx, walletID uuid.UUID, amount int64, txType models.TransactionType, reference, description string) error {
 	// Lock wallet
 	wallet, err := s.walletRepo.GetForUpdate(ctx, tx, walletID)
 	if err != nil {
@@ -174,7 +174,7 @@ func (s *LedgerService) ExecuteDeposit(ctx context.Context, tx *pgxpool.Tx, wall
 }
 
 // ExecuteWithdrawal handles money leaving a wallet
-func (s *LedgerService) ExecuteWithdrawal(ctx context.Context, tx *pgxpool.Tx, walletID uuid.UUID, amount int64, reference, description string) error {
+func (s *LedgerService) ExecuteWithdrawal(ctx context.Context, tx pgx.Tx, walletID uuid.UUID, amount int64, reference, description string) error {
 	// Lock wallet
 	wallet, err := s.walletRepo.GetForUpdate(ctx, tx, walletID)
 	if err != nil {

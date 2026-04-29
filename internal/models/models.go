@@ -138,3 +138,15 @@ const (
 	EscrowStatusReleased EscrowStatus = "released"
 	EscrowStatusRefunded EscrowStatus = "refunded"
 )
+
+type AuditLog struct {
+	ID         uuid.UUID `json:"id" db:"id"`
+	UserID     uuid.UUID `json:"user_id" db:"user_id"`
+	EntityType string    `json:"entity_type" db:"entity_type"` // wallet, transaction, loan, etc.
+	EntityID   uuid.UUID `json:"entity_id" db:"entity_id"`
+	Action     string    `json:"action" db:"action"`         // created, updated, deleted, etc.
+	OldValues  string    `json:"old_values" db:"old_values"` // JSON of old values
+	NewValues  string    `json:"new_values" db:"new_values"` // JSON of new values
+	IPAddress  string    `json:"ip_address" db:"ip_address"`
+	CreatedAt  time.Time `json:"created_at" db:"created_at"`
+}
